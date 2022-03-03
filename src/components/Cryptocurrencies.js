@@ -3,23 +3,31 @@ import millify from 'millify';
 import { Link } from 'react-router-dom';
 import { Card, Row, Col, Input } from 'antd';
 
-import { useGetCryptosQuery } from '../services/cryptoApi';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { getCryptoAction } from '../actions/cryptoApiActions';
+
+// import { useGetCryptosQuery } from '../services/cryptoApi';
 
 const Cryptocurrencies = ({ simplified }) => {
+  const dispatch = useDispatch();
+
   const count = simplified ? 10 : 100;
-  const { data: cryptosList, isFetching } = useGetCryptosQuery(count);
-  const [cryptos, setCryptos] = useState([]);
+  // const { data: cryptosList, isFetching } = useGetCryptosQuery(count);
+
+  // const [cryptos, setCryptos] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const filteredData = cryptosList?.data?.coins.filter(coin =>
-      coin.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const getData = () => dispatch(getCryptoAction(count));
+    getData();
+  }, []);
 
-    setCryptos(filteredData);
-  }, [cryptosList, searchTerm]);
+  const cryptos = useSelector(state => state.cryptos.data);
+  const error = useSelector(state => state.cryptos.error);
+  const loading = useSelector(state => state.crptos.loading);
 
-  if (isFetching) return 'Loading';
+  // if (isFetching) return 'Loading';
 
   return (
     <>
